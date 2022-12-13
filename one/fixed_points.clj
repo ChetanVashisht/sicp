@@ -34,7 +34,7 @@
       (zero? b-val) b
       :else (throw (AssertionError. "Incorrect input, both values have the same sign")))))
 
-(half-interval-method polynomial 5 0)
+;; (half-interval-method polynomial 5 0)
 ;; ↪ Execution error (AssertionError) at one.fixed-points/half-interval-method (form-init12860298277056988051.clj:29).
 ;;    Incorrect input, both values have the same sign
 (half-interval-method polynomial 5 1.5)
