@@ -77,6 +77,7 @@
 (defn polynomial-xx [x] (/ (log 1000) (log x)))
 
 (fixed-point polynomial-xx 2.0)
+;; ↪ 4.555493957531389
 
 ;; This is a fixed point for x
 ;; x = 1/2 (x + ln(y)/ln(x))

@@ -1,6 +1,6 @@
 (ns one.continued-fractions
-  (:use [commons])
-  (:use [clojure.math]))
+  (:use [commons :refer :all])
+  (:require [clojure.math]))
 
 ;; Ex 1.37
 
