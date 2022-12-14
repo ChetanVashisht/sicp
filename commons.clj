@@ -11,3 +11,7 @@
 (defn plus1 [a] (+ a 1))
 
 (defn cube [a] (* a a a))
+
+(defn gcd [a b]
+  (if (= b 0) a
+      (recur b (mod a b))))
