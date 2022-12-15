@@ -3,21 +3,30 @@
   (:require [clojure.math]))
 
 
-(defn cons-cells [f l]
+(defn cons [f l]
   #(if % f l))
 
+(defn car [z]
+  (z true))
+
+(defn cdr [z]
+  (z false))
+
 (defn numer [r]
-  (r true))
+  (car r))
 
 (defn denom [r]
-  (r false))
+  (cdr r))
 
 ;; Ex 2.1
 (defn make-rational [n d]
   (let [g (gcd n d)]
     (if (zero? d)
       (throw (AssertionError. "Denominator can't be 0"))
-      (cons-cells (/ n g) (/ d g)))))
+      (cons (/ n g) (/ d g)))))
+
+(defn print-rational [x]
+  (print (numer x) "/" (denom x) " "))
 
 (print-rational (make-rational 0 7))
 (print-rational (make-rational 3 -6))
@@ -25,8 +34,6 @@
 (print-rational (make-rational -3 -6))
 (print-rational (make-rational 3 6))
 
-(defn print-rational [x]
-  (print (numer x) "/" (denom x) " "))
 
 (defn add-rationals [x y]
   (make-rational (+ (* (numer x) (denom y))
