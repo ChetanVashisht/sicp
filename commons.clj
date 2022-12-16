@@ -16,11 +16,23 @@
   (if (= b 0) a
       (recur b (mod a b))))
 
-(defn cons [x y]
-  (fn [m] (m x y)))
+;; (defn cons [x y]
+;;   (fn [m] (m x y)))
 
-(defn car [z]
-  (z (fn [p q] p)))
+;; (defn car [z]
+;;   (z (fn [p q] p)))
 
-(defn cdr [z]
-  (z (fn [p q] q)))
+;; (defn cdr [z]
+;;   (z (fn [p q] q)))
+
+(defn cons [item coll] (conj coll item))
+
+(defn car [x] (first x))
+
+(defn cdr [z] (rest z))
+
+(defn cadr [z] (first (rest z)))
+
+(defn caddr [z] (first (rest (rest z))))
+
+(defn null? [x] (empty? x))
