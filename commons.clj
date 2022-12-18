@@ -25,7 +25,8 @@
 ;; (defn cdr [z]
 ;;   (z (fn [p q] q)))
 
-(defn cons [item coll] (conj coll item))
+(defn cons [item others]
+  (conj others item))
 
 (defn car [x] (first x))
 
@@ -36,3 +37,10 @@
 (defn caddr [z] (first (rest (rest z))))
 
 (defn null? [x] (empty? x))
+
+(conj (list 5) 4)
+;; ↪ (4 5)
+
+(type (concat (list) (list 5)))
+
+(into [5] (list 6))
