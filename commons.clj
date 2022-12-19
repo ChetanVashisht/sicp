@@ -28,9 +28,9 @@
 (defn cons [item others]
   (conj others item))
 
-(defn car [x] (first x))
+(def car first)
 
-(defn cdr [z] (rest z))
+(def cdr rest)
 
 (defn cadr [z] (first (rest z)))
 
@@ -38,9 +38,8 @@
 
 (defn null? [x] (empty? x))
 
-(conj (list 5) 4)
-;; ↪ (4 5)
+(def pair? seq?)
 
-(type (concat (list) (list 5)))
-
-(into [5] (list 6))
+(defn append [list1 list2]
+  (if (empty? list1) list2
+      (cons (car list1) (append (cdr list1) list2))))

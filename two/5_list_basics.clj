@@ -69,15 +69,13 @@
 (defn coin-change-base
   ([total denominations] (coin-change-base total denominations (- (length denominations) 1)))
   ([total denominations index]
-   (do
-     (print total denominations index)
-     (cond
-       (zero? total) 1
-       (neg? index) 0
-       (neg? total) 0
-       :else (let [value (list-ref denominations index)]
-               (+ (coin-change-base (- total value) denominations index)
-                  (coin-change-base total denominations (- index 1))))))))
+   (cond
+     (zero? total) 1
+     (neg? index) 0
+     (neg? total) 0
+     :else (let [value (list-ref denominations index)]
+             (+ (coin-change-base (- total value) denominations index)
+                (coin-change-base total denominations (- index 1)))))))
 
 (testing "Testing coin-change"
   (is (= 292 (coin-change-base 100 (list 50 25 10 5 1)))))
@@ -103,13 +101,47 @@
   (let [parity (mod (car l) 2)
         filt (fn [l parity out]
                (if (null? l)
-                 out
+                 (reverse-list out)
                  (let [elem (car l)
                        qualifies? (= (mod elem 2) parity)]
                    (recur (cdr l) parity (if qualifies? (cons elem out) out)))))]
-    (filt l parity [])))
+    (filt l parity (list))))
 
 (testing "Testing same-parity"
   (is (= '(10 2 16) (same-parity 10 2 3 45 16))))
 
-(same-parity 10 2 3 45 16)
+;; Ex 2.21
+(defn square-list [items]
+  (let [item (car items)]
+    (if (null? items) nil
+        (cons (* item item) (square-list (cdr items))))))
+
+(testing "Testing square-list"
+  (is (= '(1 4 9 16) (square-list (list 1 2 3 4)))))
+
+(defn square-list [items]
+  (map square items))
+
+(testing "Testing square-list"
+  (is (= '(1 4 9 16) (square-list (list 1 2 3 4)))))
+
+;; Ex 2.22
+(defn square-list [items]
+  (let [iter (fn [things answer]
+               (if (null? things)
+                 answer
+                 (recur (cdr things)
+                        (cons (square (car things))
+                              answer))))]
+    (iter items nil)))
+
+(square-list (list 1 2 3 4))
+
+;;Ex 2.23
+(defn for-each [f items]
+  (if (null? items) nil
+      (do
+        (f (car items))
+        (for-each f (cdr items)))))
+
+(for-each (fn [x] (println x)) (list 50 30 1))
