@@ -8,7 +8,7 @@
 (testing
     (is (= 1 (car list-1-4))))
 
-(testing
+(testing "test cdr"
     (is (= '(2 3) (cdr (list 1 2 3)))))
 
 (defn list-ref [l n]
@@ -30,9 +30,6 @@
   (is (= 0 (length (list ))))
   (is (= 4 (length (list 1 2 3 4)))))
 
-(defn append [list1 list2]
-  (if (empty? list1) list2
-      (cons (car list1) (append (cdr list1) list2))))
 
 (testing "Testing expressions"
   (is (= '(1 2 34 3 4 5) (append (list 1 2 34) (list 3 4 5)))))
@@ -85,8 +82,8 @@
     (zero? total) 1
     (neg? total) 0
     (null? denominations) 0
-    :else (let [first-denomination car
-                except-first-denomination cdr]
+    :else (let [first-denomination #(car %)
+                except-first-denomination #(cdr %)]
             (+ (coin-change total (except-first-denomination denominations))
                (coin-change (- total (first-denomination denominations)) denominations)))))
 

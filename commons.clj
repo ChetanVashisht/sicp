@@ -1,4 +1,5 @@
-(ns commons)
+(ns commons
+  (:use clojure.test))
 
 (defn square [x] (* x x))
 
@@ -28,18 +29,45 @@
 (defn cons [item others]
   (conj others item))
 
-(def car first)
+(defmacro car [x]
+  `(first ~x))
 
-(def cdr rest)
+(defmacro cdr [x]
+  `(next ~x))
 
 (defn cadr [z] (first (rest z)))
 
 (defn caddr [z] (first (rest (rest z))))
 
-(defn null? [x] (empty? x))
+(defmacro null? [x]
+  `(or (nil? ~x)
+       (if (seq? ~x)
+         (empty? ~x)
+         false)))
 
-(def pair? seq?)
+(defmacro pair? [x] `(seq? ~x))
+
+(defmacro !pair? [x]
+  `(not (pair? ~x)))
+
+(!pair? (list 1 2 3))
+
+(null? (list 12 4))
+
+(car (list 1 2 3))
 
 (defn append [list1 list2]
-  (if (empty? list1) list2
+  (if (null? list1) list2
       (cons (car list1) (append (cdr list1) list2))))
+
+(testing "Testing append"
+  (is (= '(1 2 3 3 5 6) (append (list 1 2 3) (list 3 5 6)))))
+
+
+(defn flatmap [f seq]
+  (reduce append nil (map f seq)))
+
+(defn accumulate-n [op init seqs]
+  (if (null? (car seqs)) nil
+      (cons (reduce op init (map first seqs))
+            (accumulate-n op init (map rest seqs)))))

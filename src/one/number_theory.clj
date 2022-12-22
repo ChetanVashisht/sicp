@@ -1,4 +1,4 @@
-(ns number-theory)
+(ns one.numbertheory)
 
 (defn gcd [a b]
   (if (= b 0)
