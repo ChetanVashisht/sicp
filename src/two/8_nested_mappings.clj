@@ -112,12 +112,13 @@
                  (if (= k index)
                    new-row row)) roq))
 
-(defn safe? [k positions]
-  (filter safe-pos positions))
-
 (defn safe-pos [position]
   (let [row-sum (accumulate-n + 0 position)]
     (reduce #(and %1 (or (zero? %2) (= 1 %2))) true row-sum)))
+
+(defn safe? [k positions]
+  (filter safe-pos positions))
+
 
 (safe-pos (->> 5
                (empty-board)

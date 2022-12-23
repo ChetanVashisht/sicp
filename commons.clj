@@ -71,3 +71,10 @@
   (if (null? (car seqs)) nil
       (cons (reduce op init (map first seqs))
             (accumulate-n op init (map rest seqs)))))
+
+
+(defn memq [item x]
+  (cond
+    (null? x) false
+    (= item (car x)) x
+    :else (recur item (cdr x))))
