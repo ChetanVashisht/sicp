@@ -6,12 +6,16 @@
 (defn variable? [e]
   (symbol? e))
 
-(let [a 5]
-  (testing "Testing variable?"
-    (is (= true (variable? 'a))))
-  (testing "Testing variable?"
-    (is (= false (variable? a))))
-  )
+(defn =number? [exp num]
+  (and (number? exp) (= exp num)))
+
+(comment
+  (let [a 5]
+    (testing "Testing variable?"
+      (is (= true (variable? 'a))))
+    (testing "Testing variable?"
+      (is (= false (variable? a))))
+    ))
 
 (defn same-variable? [v1 v2]
   (= v1 v2))
@@ -24,66 +28,6 @@
 
 (defn is-operation? [op e]
   (and (pair? e) (= (car e) op)))
-
-(defn sum? [e]
-  (is-operation? '+ e))
-
-(comment
-  (testing "Testing sum?"
-    (is (= true (sum? '(+ 3 4)))))
-  (testing "Testing sum?"
-    (is (= false (sum? '(* a 4))))))
-
-(defn addend [e]
-  (cadr e))
-
-(comment
-  (testing "Testing addend"
-    (is (= 3 (addend '(+ 3 4))))))
-
-(defn augend [e]
-  (caddr e))
-
-(comment
-  (testing "Testing augend"
-    (is (= 4 (augend '(+ 3 4)))))
-  )
-
-(defn =number? [exp num]
-  (and (number? exp) (= exp num)))
-
-(defn can-be-added? [a1 a2]
-  (if-let [[v1 v2]
-           (and (product? a1) (product? a2)
-                [(multiplicand a1) (multiplicand a2)])]
-    (and (variable? v1) (variable? v2) (= v1 v2))
-    false))
-
-(defn make-sum [a1 a2]
-  (cond
-    (=number? a1 0) a2
-    (=number? a2 0) a1
-    (and (number? a1) (number? a2)) (+ a1 a2)
-    (and (variable? a1) (variable? a2) (= a1 a2)) (make-product 2 a1)
-    (can-be-added? a1 a2) (make-product (make-sum (multiplier a1) (multiplier a2)) (multiplicand a1))
-    :else (list '+ a1 a2)))
-
-(comment
-  (testing "Testing make-sum"
-    (is (= '(+ 3 c) (make-sum 3 'c))))
-  (testing "Testing make-sum"
-    (is (= 8 (make-sum 3 5))))
-  (testing "Testing make-sum"
-    (is (= 'a (make-sum 0 'a))))
-  (testing "Testing make-sum"
-    (is (= '(* 2 a) (make-sum 'a 'a))))
-  (testing "Testing can-be-added?"
-    (is (= false (can-be-added? '(+ 5 a) '(+ 7 a)))))
-  (testing "Testing can-be-added?"
-    (is (= true (can-be-added? '(* 5 a) '(* 7 a)))))
-  (testing "Testing make-sum"
-    (is (= '(* 12 a) (make-sum '(* 5 a) '(* 7 a)))))
-  )
 
 (defn product? [e]
   (is-operation? '* e))
@@ -132,6 +76,65 @@
   (testing "Testing make-product"
     (is (= '(* 6 a) (make-product 6 'a))))
   )
+
+(defn sum? [e]
+  (is-operation? '+ e))
+
+(comment
+  (testing "Testing sum?"
+    (is (= true (sum? '(+ 3 4)))))
+  (testing "Testing sum?"
+    (is (= false (sum? '(* a 4))))))
+
+(defn addend [e]
+  (cadr e))
+
+(comment
+  (testing "Testing addend"
+    (is (= 3 (addend '(+ 3 4))))))
+
+(defn augend [e]
+  (caddr e))
+
+(comment
+  (testing "Testing augend"
+    (is (= 4 (augend '(+ 3 4)))))
+  )
+
+
+(defn can-be-added? [a1 a2]
+  (if-let [[v1 v2]
+           (and (product? a1) (product? a2)
+                [(multiplicand a1) (multiplicand a2)])]
+    (and (variable? v1) (variable? v2) (= v1 v2))
+    false))
+
+(defn make-sum [a1 a2]
+  (cond
+    (=number? a1 0) a2
+    (=number? a2 0) a1
+    (and (number? a1) (number? a2)) (+ a1 a2)
+    (and (variable? a1) (variable? a2) (= a1 a2)) (make-product 2 a1)
+    (can-be-added? a1 a2) (make-product (make-sum (multiplier a1) (multiplier a2)) (multiplicand a1))
+    :else (list '+ a1 a2)))
+
+(comment
+  (testing "Testing make-sum"
+    (is (= '(+ 3 c) (make-sum 3 'c))))
+  (testing "Testing make-sum"
+    (is (= 8 (make-sum 3 5))))
+  (testing "Testing make-sum"
+    (is (= 'a (make-sum 0 'a))))
+  (testing "Testing make-sum"
+    (is (= '(* 2 a) (make-sum 'a 'a))))
+  (testing "Testing can-be-added?"
+    (is (= false (can-be-added? '(+ 5 a) '(+ 7 a)))))
+  (testing "Testing can-be-added?"
+    (is (= true (can-be-added? '(* 5 a) '(* 7 a)))))
+  (testing "Testing make-sum"
+    (is (= '(* 12 a) (make-sum '(* 5 a) '(* 7 a)))))
+  )
+
 
 (defn exponentiation? [e]
   (is-operation? '** e))
@@ -183,22 +186,25 @@
                          v (multiplicand exp)]
                      (make-sum (make-product u (derivative v var))
                                (make-product v (derivative u var))))
-    (exponentiation? exp)(let [b (base exp)
-                               power (exponent exp)]
-                           (make-product (make-product power (make-exponentiation b (- power 1))) (derivative b var)))
+    (exponentiation? exp) (let [b (base exp)
+                                power (exponent exp)]
+                            (make-product (make-product power (make-exponentiation b (- power 1))) (derivative b var)))
     :else (throw (AssertionError. "Unknown expression, can't differentiate"))))
 
+(comment
 
-(testing "Testing derivative"
-  (is (= 1 (derivative '(+ a 5) 'a))))
+  (testing "Testing derivative"
+    (is (= 1 (derivative '(+ a 5) 'a))))
 
-(testing "Testing derivative"
-  (is (= 0 (derivative 'a 'b))))
+  (testing "Testing derivative"
+    (is (= 0 (derivative 'a 'b))))
 
-(testing "Testing derivative"
-  (is (= '(* 2 a) (derivative '(+ (* a a) 5) 'a))))
+  (testing "Testing derivative"
+    (is (= '(* 2 a) (derivative '(+ (* a a) 5) 'a))))
 
-(testing "Testing derivative"
-  (is (= '(* 5 (** a 4)) (derivative '(** a 5) 'a))))
+  (testing "Testing derivative"
+    (is (= '(* 5 (** a 4)) (derivative '(** a 5) 'a))))
 
-(derivative '(* 9 (** a 7)) 'a)
+  (testing "Testing derivative"
+    (is (= '(* 63 (** a 6)) (derivative '(* 9 (** a 7)) 'a))))
+  )
